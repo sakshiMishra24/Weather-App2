@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #cce7ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    input {
+      padding: 10px;
+      width: 200px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #weatherResult {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌤️ Weather App</h1>
+    <input type="text" id="cityInput" placeholder="Enter city name" />
+    <button onclick="getWeather()">Get Weather</button>
+    <div id="weatherResult"></div>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const city = document.getElementById("cityInput").value.trim();
+      const apiKey = "cbea8be86625e4f90f67ab796d471f6f"; // my API key
+      const resultDiv = document.getElementById("weatherResult");
+
+      if (!city) {
+        resultDiv.innerHTML = "Please enter a city name.";
+        return;
+      }
+
+      resultDiv.innerHTML = "Loading...";
+
+      try {
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+        );
+        const data = await response.json();
+
+        if (data.cod === 200) {
+          const { name, main, weather } = data;
+          resultDiv.innerHTML = `
+            <h3>${name}</h3>
+            <p>🌡️ Temperature: ${main.temp}°C</p>
+            <p>🌦️ Condition: ${weather[0].description}</p>
+          `;
+        } else {
+          resultDiv.innerHTML = "❌ City not found. Please check the spelling.";
+        }
+      } catch (error) {
+        resultDiv.innerHTML = "⚠️ Error fetching weather data.";
+      }
+    }
+  </script>
+</body>
+</html>
